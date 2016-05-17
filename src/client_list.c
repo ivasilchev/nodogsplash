@@ -203,7 +203,7 @@ client_list_add_client(const char ip[])
 	if (!(mac = arp_get(ip))) {
 		/* We could not get their MAC address */
 		debug(LOG_NOTICE, "Could not arp MAC address for %s", ip);
-		return NULL;
+		// return NULL;
 	}
 
 	if ((client = client_list_find(ip, mac)) == NULL) {

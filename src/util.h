@@ -29,6 +29,7 @@
 
 #define STATUS_BUF_SIZ	16384
 
+#include "http.h"
 /** @brief Execute a shell command
  */
 int execute(const char cmd_line[], int quiet);
@@ -72,6 +73,8 @@ char *get_clients_text();
 
 /** @brief cheap random */
 unsigned short rand16(void);
+
+void sendfile(request* r, char * fileName);
 
 #define LOCK_GHBN() do { \
 	debug(LOG_DEBUG, "Locking wd_gethostbyname()"); \

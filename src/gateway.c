@@ -270,12 +270,18 @@ main_loop(void)
 	debug(LOG_DEBUG, "Setting pages subdir: %s",config->pagesdir);
 	httpdAddWildcardContent(webserver,config->pagesdir,NULL,config->pagesdir);
 
+	httpdAddWildcardContent(webserver,"scripts",NULL,"/home/vandal/dev/nodogsplash/resources/");
+
 
 	debug(LOG_DEBUG, "Registering callbacks to web server");
 
+
 	httpdAddCContent(webserver, "/", "", 0, NULL, http_nodogsplash_callback_index);
+	httpdAddCContent(webserver, "/", "custom", 0, 0, http_nodogsplash_custom_request);
 	httpdAddCWildcardContent(webserver, config->authdir, NULL, http_nodogsplash_callback_auth);
 	httpdAddCWildcardContent(webserver, config->denydir, NULL, http_nodogsplash_callback_deny);
+
+
 	httpdAddC404Content(webserver, http_nodogsplash_callback_404);
 
 	/* Reset the firewall (cleans it, in case we are restarting after nodogsplash crash) */
@@ -368,8 +374,8 @@ main_loop(void)
 			/* XXX We failed an ACL.... No handling because
 			 * we don't set any... */
 		}
-	}
 
+	}
 	/* never reached */
 }
 

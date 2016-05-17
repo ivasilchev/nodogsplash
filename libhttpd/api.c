@@ -29,12 +29,12 @@
 #if defined(_WIN32)
 #include <winsock2.h>
 #else
-#include <unistd.h> 
+#include <unistd.h>
 #include <sys/file.h>
-#include <netinet/in.h> 
-#include <arpa/inet.h> 
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
-#include <sys/socket.h> 
+#include <sys/socket.h>
 #include <netdb.h>
 #endif
 
@@ -220,7 +220,7 @@ httpd *httpdCreate(host, port, ip6)
 	** Setup the socket
 	*/
 #ifdef _WIN32
-	{ 
+	{
 	WORD 	wVersionRequested;
 	WSADATA wsaData;
 	int 	err;
@@ -228,7 +228,7 @@ httpd *httpdCreate(host, port, ip6)
 	wVersionRequested = MAKEWORD( 2, 2 );
 
 	err = WSAStartup( wVersionRequested, &wsaData );
-	
+
 	/* Found a usable winsock dll? */
 	if( err != 0 )
 	   return NULL;
@@ -543,7 +543,7 @@ int httpdReadRequest(httpd *server, request *r)
 				}
 			}
 			/* End modification */
-#if 0
+//#if 0
 			if (strncasecmp(buf,"If-Modified-Since: ",19) == 0)
 			{
 				cp = strchr(buf,':') + 2;
@@ -558,6 +558,7 @@ int httpdReadRequest(httpd *server, request *r)
 						*cp = 0;
 				}
 			}
+			/*
 			if (strncasecmp(buf,"Content-Type: ",14) == 0)
 			{
 				cp = strchr(buf,':') + 2;
@@ -568,19 +569,21 @@ int httpdReadRequest(httpd *server, request *r)
 					r->request.contentType[HTTP_MAX_URL-1]=0;
 				}
 			}
+			*/
+
 			if (strncasecmp(buf,"Content-Length: ",16) == 0)
 			{
 				cp = strchr(buf,':') + 2;
 				if(cp)
 					r->request.contentLength=atoi(cp);
 			}
-#endif
+//#endif
 			continue;
 		}
 	}
 
 
-#if 0
+//#if 0
 	/* XXX: For WifiDog, we only process the query string parameters
 	   but keep the GET variables in the request.query!
 	*/
@@ -592,9 +595,9 @@ int httpdReadRequest(httpd *server, request *r)
 		bzero(buf, HTTP_MAX_LEN);
 		_httpd_readBuf(r, buf, r->request.contentLength);
 		_httpd_storeData(r, buf);
-		
+
 	}
-#endif
+//#endif
 
 	/*
 	** Process any URL data
@@ -1044,7 +1047,7 @@ void httpdAuthenticate(request *r, const char *realm)
 	if (r->request.authLength == 0)
 	{
 		httpdSetResponse(r, "401 Please Authenticate");
-		snprintf(buffer,sizeof(buffer), 
+		snprintf(buffer,sizeof(buffer),
 			"WWW-Authenticate: Basic realm=\"%s\"\n", realm);
 		httpdAddHeader(r, buffer);
 		httpdOutput(r,"\n");
@@ -1057,7 +1060,7 @@ void httpdForceAuthenticate(request *r, const char *realm)
 	char	buffer[255];
 
 	httpdSetResponse(r, "401 Please Authenticate");
-	snprintf(buffer,sizeof(buffer), 
+	snprintf(buffer,sizeof(buffer),
 		"WWW-Authenticate: Basic realm=\"%s\"\n", realm);
 	httpdAddHeader(r, buffer);
 	httpdOutput(r,"\n");

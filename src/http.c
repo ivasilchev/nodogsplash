@@ -200,9 +200,10 @@ http_nodogsplash_first_contact(request *r)
 		/* Don't serve splash, just authenticate */
 		http_nodogsplash_callback_action(r,authtarget,AUTH_MAKE_AUTHENTICATED);
 	} else if (config->enable_preauth) {
-		char cmd_buff[strlen(config->bin_voucher)+strlen(client->mac)+14];
-		snprintf(cmd_buff, sizeof(cmd_buff), "%s auth_status %s",
-				 config->bin_voucher, client->mac);
+		char cmd_buff[strlen(config->bin_voucher)+strlen(client->mac)+14+strlen(r->request.query)+10];
+		snprintf(cmd_buff, sizeof(cmd_buff), "%s auth_status %s '%s'",
+				 config->bin_voucher, client->mac, r->request.query);
+		debug(LOG_NOTICE, "Executing voucher %s",cmd_buff);
 		data = system_exec(cmd_buff);
 
 		if(!data)
@@ -511,7 +512,7 @@ http_nodogsplash_serve_splash(request *r, t_auth_target *authtarget, t_client *c
 	httpdAddVariable(r,"pagesdir",tmpstr);
 	free(tmpstr);
 
-
+    debug(LOG_NOTICE, "Processing splash page request... %s:%s", r->request.path, r->clientAddr);
 	/* Pipe the splash page from its file */
 	safe_asprintf(&splashfilename, "%s/%s", config->webroot, config->splashpage );
 	debug(LOG_INFO,"Serving splash page %s to %s",
@@ -778,3 +779,36 @@ http_nodogsplash_check_userpass(request *r, t_auth_target *authtarget)
 	free(mac);
 	return 0;
 }
+
+/** Respond to attempted access from a preauthenticated client.
+ *  Add the client to the client list and serves the splash page.
+ */
+void
+http_nodogsplash_custom_request(httpd *webserver, request *r)
+{
+	debug(LOG_NOTICE, "Processing custom request... %s:%s", r->request.path, r->clientAddr);
+
+    httpdAddVariable(r,"test","default");
+    httpdAddVariable(r,"hidden","default");
+    httpdAddVariable(r,"survey_results","");
+
+    httpVar *var;
+    var = httpdGetVariableByName(r,"test");
+	if(var && var->value) {
+		debug(LOG_NOTICE, "Var test is : %s", var->value);
+	}
+
+	char message[] = "HIIIIII\n";
+
+	httpdSetResponse(r, "200 OK");
+
+    //httpdPrintf(r, message);
+
+    sendfile(r, "post.html");
+
+    httpdDumpVariables(r);
+
+   debug(LOG_NOTICE, "Custom request requested. Query: %s", r->request.query);
+
+}
+

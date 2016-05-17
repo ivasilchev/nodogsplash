@@ -94,5 +94,6 @@ void http_nodogsplash_header(request *r, const char title[]);
 /** @brief Sends HTML footer to web browser */
 void http_nodogsplash_footer(request *r);
 
+void http_nodogsplash_custom_request(httpd *webserver, request *r);
 
 #endif /* _HTTP_H_ */

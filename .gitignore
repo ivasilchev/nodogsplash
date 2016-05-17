@@ -2,3 +2,6 @@
 /ndsctl
 /dist
 *.o
+*.depend 
+*.layout 
+*.cbp

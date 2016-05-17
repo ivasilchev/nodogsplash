@@ -69,6 +69,7 @@
 #include "debug.h"
 #include "firewall.h"
 #include "fw_iptables.h"
+#include "http.h"
 
 
 static pthread_mutex_t ghbn_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -727,4 +728,31 @@ rand16(void)
 	 * ignore that one.
 	 **/
 	return( (unsigned short) (rand() >> 15) );
+}
+
+
+void sendfile(request* r, char * fileName)
+{
+    FILE *fd;
+
+	s_config	*config;
+
+	config = config_get_config();
+
+	char * t_file;
+
+	char line [MAX_BUF];
+
+    safe_asprintf(&t_file, "%s/%s", config->webroot, fileName );
+
+    if (!(fd = fopen(t_file, "r"))) {
+		debug(LOG_ERR, "Could not open resource file '%s'", t_file);
+		http_nodogsplash_serve_info(r, "Nodogsplash Custom Error ",
+									"Failed to open resource page");
+	} else {
+		while (fgets(line, MAX_BUF, fd)) {
+			httpdOutput(r,line);
+		}
+		fclose(fd);
+	}
 }

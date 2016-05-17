@@ -113,7 +113,15 @@ typedef enum {
 	oAllowedMACList,
 	oFWMarkAuthenticated,
 	oFWMarkTrusted,
-	oFWMarkBlocked
+	oFWMarkBlocked,
+
+	// Custom Survey options
+	oDisableMacChecks,
+	oSurveyEnabled,
+	oSurveyResourcePath.
+	oSurveyDataPath,
+	oSurveyPassword,
+	oSurveyUsername
 } OpCodes;
 
 /** @internal
